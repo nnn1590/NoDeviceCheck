@@ -48,6 +48,10 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
 
     }
 
+    public static void logHookAfter(XC_MethodHook.MethodHookParam param) {
+        Log.d("NoDeviceCheck", "Method hook executed (" + param.method.getName() + ", post-result=" + param.getResult());
+    }
+
     public static void logHookAfter(XC_MethodHook.MethodHookParam param, File file) {
         Log.d("NoDeviceCheck", "Method hook executed (" + param.method.getName() + ") for file " + file + ", post-result=" + param.getResult());
     }
