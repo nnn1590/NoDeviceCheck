@@ -147,7 +147,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                     });
         }
 
-        if (("android".equals(lpparam.packageName)) || ("droidguard".contains(lpparam.packageName)) || ("google.android.gms".contains(lpparam.packageName)) || ("walletnfcrel".contains(lpparam.packageName))) {
 
 //            Begin various boolean checks on file class
 
@@ -365,7 +364,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                     });
 
 
-        }
 
         XposedHelpers.findAndHookMethod(JSONObject.class, "getBoolean",
                 String.class, new XC_MethodHook() {
@@ -374,6 +372,7 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             throws Throwable {
                         String name = (String) param.args[0];
                         // Modify server response to pass CTS check
+                        Log.d("NoDeviceCheck:","Boolean checked is " + name + " and calling package is " + lpparam.packageName);
                         if ("ctsProfileMatch".equals(name)
                                 || "isValidSignature".equals(name)) {
                             param.setResult(true);
@@ -389,7 +388,7 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                     protected void beforeHookedMethod(MethodHookParam param)
                             throws Throwable {
                         String name = (String) param.args[0];
-                        XposedBridge.log("NoDeviceCheck: String checked is " + name + " and calling package is " + lpparam.packageName);
+                        Log.d("NoDeviceCheck:","String checked is " + name + " and calling package is " + lpparam.packageName);
                         // Modify server response to pass CTS check
                         if ("ctsProfileMatch".equals(name)
                                 || "isValidSignature".equals(name)) {
