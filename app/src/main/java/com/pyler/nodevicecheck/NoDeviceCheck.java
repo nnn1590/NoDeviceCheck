@@ -15,22 +15,19 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class NoDeviceCheck implements IXposedHookLoadPackage {
-    public String[] keyWords = {"/su", "XposedBridge", "xposed", "xposed.installer", "app_process32_", "app_process64_", "supolicy", "sukernel", "libsupol.so", "SuperSUDaemon", "daemonsu", "Superuser", "chatter.pie", "libxposed"};
+    public String[] keyWords = {"sugote", "XposedBridge", "xposed", "xposed.installer", "app_process32_", "app_process64_", "supolicy", "sukernel", "libsupol.so", "SuperSUDaemon", "daemonsu", "Superuser", "chatter.pie", "libxposed"};
     public static final String CLASS_DROIDGUARD = "com.google.ccc.abuse.droidguard.DroidGuard";
 
 
     public boolean checkFileBool(File file, String packagename, String checktype) {
         for (int i = 0; i < keyWords.length; i++) {
-            if (file.toString().contains(keyWords[i])) {
-                if ((!file.toString().contains("sum")) && (!file.toString().contains("sub")) && (!file.toString().contains("surface"))) {
-                    Log.d("NoDeviceCheck", "Found matching string - " + file + ". Caller: " + packagename + ". Checktype: " + checktype);
-                    XposedBridge.log("NoDeviceCheck: Found matching string - " + file + ". Caller: " + packagename + ". Checktype: " + checktype);
-                    return true;
-                }
+            if (file.toString().contains(keyWords[i]) || file.toString().endsWith("/su")) {
+                Log.d("NoDeviceCheck", "Found matching string - " + file + ". Caller: " + packagename + ". Checktype: " + checktype);
+                XposedBridge.log("NoDeviceCheck: Found matching string - " + file + ". Caller: " + packagename + ". Checktype: " + checktype);
+                return true;
             }
         }
         return false;
-
     }
 
 
@@ -45,7 +42,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                 }
             }
         return false;
-
     }
 
     public static void logHookAfter(XC_MethodHook.MethodHookParam param) {
@@ -147,13 +143,10 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                     });
         }
 
-
 //            Begin various boolean checks on file class
 
             XposedHelpers.findAndHookMethod(File.class, "exists",
                     new XC_MethodHook() {
-
-
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param)
                                 throws Throwable {
@@ -169,14 +162,8 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "exists")) {
                                 param.setResult(false);
                                 logHookAfter(param, file);
-
-
                             }
                         }
-
-
-
-
                     });
 
             XposedHelpers.findAndHookMethod(File.class, "canExecute",
@@ -188,11 +175,8 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "canExecute")) {
                                 param.setResult(false);
                                 logHookAfter(param, file);
-
                             }
                         }
-
-
                     });
 
             XposedHelpers.findAndHookMethod(File.class, "canRead",
@@ -204,7 +188,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "canRead")) {
                                 param.setResult(false);
                                 logHookAfter(param, file);
-
                             }
                         }
                     });
@@ -218,7 +201,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "canWrite")) {
                                 param.setResult(false);
                                 logHookAfter(param, file);
-
                             }
                         }
                     });
@@ -232,7 +214,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "createNewFile")) {
                                 param.setResult(false);
                                 logHookAfter(param, file);
-
                             }
                         }
                     });
@@ -246,7 +227,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "isDirectory")) {
                                 param.setResult(false);
                                 logHookAfter(param, file);
-
                             }
                         }
                     });
@@ -260,7 +240,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "isFile")) {
                                 param.setResult(false);
                                 logHookAfter(param, file);
-
                             }
                         }
                     });
@@ -279,7 +258,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "getAbsolutePath")) {
                                 param.setResult("");
                                 logHookAfter(param, file);
-
                             }
                         }
                     });
@@ -307,7 +285,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "getParent")) {
                                 param.setResult("");
                                 logHookAfter(param, file);
-
                             }
                         }
                     });
@@ -321,7 +298,6 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             if (checkFileBool(file, lpparam.packageName, "getPath")) {
                                 param.setResult("");
                                 logHookAfter(param, file);
-
                             }
                         }
                     });
@@ -333,9 +309,34 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                         protected void beforeHookedMethod(MethodHookParam param)
                                 throws Throwable {
                             File file = (File) param.thisObject;
-                            Log.v("NoDeviceCheck:", "File checked (listFiles): " + file.toString() + " and result is " + param.getResult() + " Caller: " + lpparam.packageName);
+                            Log.v("NoDeviceCheck", "File checked (listFiles): " + file.toString() + " and result is " + param.getResult() + " Caller: " + lpparam.packageName);
+                        }
 
-
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param)
+                                throws Throwable {
+                            File file = (File) param.thisObject;
+                            
+                            // get the result of listFiles and store it in an array, then initialize a new empty array with length of files array.
+                            File[] files = (File[]) param.getResult();
+                            File[] tempFiles = new File[files.length];
+                            int arraySize = 0;
+                            
+                            // loop through the array checking each file name for our keyword, if keyword not found, store tmp into tmpFiles array and move to next index.
+                            for (File tmp:files){
+                                for (int i = 0; i < keyWords.length; i++) {
+                                    if (!tmp.toString().contains(keyWords[i]) && !tmp.toString().endsWith("/su")) {
+                                        tempFiles[arraySize] = tmp;
+                                    }
+                                }
+                                arraySize++;
+                            }
+                            
+                            // create new File array with variable of counter arraySize to return an array without null/empty values. Copy each index value to new smaller array.
+                            File[] newFiles = new File[arraySize];
+                            for (int i =0; i < arraySize; i++)
+                                newFiles[i] = tempFiles[i];
+                            param.setResult(newFiles);
                         }
                     });
 
@@ -345,9 +346,30 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                         protected void beforeHookedMethod(MethodHookParam param)
                                 throws Throwable {
                             File file = (File) param.thisObject;
-                            Log.v("NoDeviceCheck:", "File checked (list): " + file.toString() + " and result is " + param.getResult() + " Caller: " + lpparam.packageName);
+                            Log.v("NoDeviceCheck", "File checked (list): " + file.toString() + " and result is " + param.getResult() + " Caller: " + lpparam.packageName);
+                        }
 
-
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param)
+                                throws Throwable {
+                            File file = (File) param.thisObject;
+                            
+                            // same idea as above but for a String array
+                            String[] files = (String[]) param.getResult();
+                            String[] tempFiles = new String[files.length];
+                            int arraySize = 0;
+                            for (String tmp:files){
+                                for (int i = 0; i < keyWords.length; i++) {
+                                    if (!tmp.contains(keyWords[i]) && !tmp.equals("su")) {
+                                        tempFiles[arraySize] = tmp;
+                                    }
+                                }
+                                arraySize++;
+                            }
+                            String[] newFiles = new String[arraySize];
+                            for (int i =0; i < arraySize; i++)
+                                newFiles[i] = tempFiles[i];
+                            param.setResult(newFiles);
                         }
                     });
 
@@ -357,9 +379,7 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                         protected void beforeHookedMethod(MethodHookParam param)
                                 throws Throwable {
                             File file = (File) param.thisObject;
-                            Log.v("NoDeviceCheck:", "File checked (listRoots): " + file.toString() + " and result is " + param.getResult() + " Caller: " + lpparam.packageName);
-
-
+                            Log.v("NoDeviceCheck", "File checked (listRoots): " + file.toString() + " and result is " + param.getResult() + " Caller: " + lpparam.packageName);
                         }
                     });
 
@@ -372,11 +392,10 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                             throws Throwable {
                         String name = (String) param.args[0];
                         // Modify server response to pass CTS check
-                        Log.d("NoDeviceCheck:","Boolean checked is " + name + " and calling package is " + lpparam.packageName);
+                        Log.d("NoDeviceCheck", "Boolean checked is " + name + " and calling package is " + lpparam.packageName);
                         if ("ctsProfileMatch".equals(name)
                                 || "isValidSignature".equals(name)) {
                             param.setResult(true);
-
                             return;
                         }
                     }
@@ -388,7 +407,7 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                     protected void beforeHookedMethod(MethodHookParam param)
                             throws Throwable {
                         String name = (String) param.args[0];
-                        Log.d("NoDeviceCheck:","String checked is " + name + " and calling package is " + lpparam.packageName);
+                        Log.d("NoDeviceCheck","String checked is " + name + " and calling package is " + lpparam.packageName);
                         // Modify server response to pass CTS check
                         if ("ctsProfileMatch".equals(name)
                                 || "isValidSignature".equals(name)) {
