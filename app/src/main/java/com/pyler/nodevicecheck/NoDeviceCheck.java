@@ -394,7 +394,8 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                         // Modify server response to pass CTS check
                         Log.d("NoDeviceCheck", "Boolean checked is " + name + " and calling package is " + lpparam.packageName);
                         if ("ctsProfileMatch".equals(name)
-                                || "isValidSignature".equals(name)) {
+                                || "isValidSignature".equals(name)
+                                || "basicIntegrity".equals(name)) {
                             param.setResult(true);
                             return;
                         }
@@ -410,7 +411,8 @@ public class NoDeviceCheck implements IXposedHookLoadPackage {
                         Log.d("NoDeviceCheck","String checked is " + name + " and calling package is " + lpparam.packageName);
                         // Modify server response to pass CTS check
                         if ("ctsProfileMatch".equals(name)
-                                || "isValidSignature".equals(name)) {
+                                || "isValidSignature".equals(name)
+                                || "basicIntegrity".equals(name)) {
                             param.setResult(true);
                             return;
                         }
