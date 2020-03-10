@@ -18,6 +18,7 @@ android {
     }
 }
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //noinspection GradleDeprecatedConfiguration
+    provided fileTree(include: ['*.jar'], dir: 'libs')
 }
 
